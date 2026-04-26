@@ -13,6 +13,7 @@ The V1 implementation is intentionally compact and reproducible:
 - a deterministic simulator creates treated and untreated customers across interpretable behavioral segments
 - a T-learner estimates separate treated and control response probabilities
 - an uplift layer computes per-customer treatment effect estimates and segment summaries
+- an economics layer turns estimated uplift into expected net value after treatment cost
 - a reporting layer emits both a machine-readable uplift report and a Markdown targeting brief
 - the report now includes uplift-curve and Qini-style evaluation outputs
 - a FastAPI endpoint serves the same top-segment recommendation that the CLI uses
@@ -27,8 +28,9 @@ flowchart LR
     E --> G["Estimated uplift"]
     F --> G
     G --> H["Segment targeting summary"]
-    H --> I["uplift_report.json"]
-    H --> J["targeting_brief.md"]
+    H --> I["Net-value filter"]
+    I --> J["uplift_report.json"]
+    I --> K["targeting_brief.md"]
 ```
 
 ## Causal Framing
@@ -40,6 +42,16 @@ uplift(x) = P(convert | treatment=1, x) - P(convert | treatment=0, x)
 ```
 
 That means a segment is only worth targeting when the intervention changes the outcome enough to justify the campaign. In practice, the V1 runs a simple T-learner, then ranks segments by estimated incremental lift.
+
+The shipped V2 decision rule adds basic treatment economics:
+
+```text
+expected_net_value_per_1000
+= uplift(x) * expected_margin_per_conversion * 1000
+  - treatment_cost_per_customer * 1000
+```
+
+Segments stay targetable only when both uplift and expected net value are positive.
 
 ### Example Output Schema
 
@@ -53,10 +65,12 @@ The `/recommendation` endpoint returns a JSON report shaped like this:
     {
       "segment": "new_high_intent",
       "estimated_uplift": 0.1234,
+      "expected_net_value_per_1000": 6170.0,
       "recommended": true
     }
   ],
   "uplift_at_top_quartile": 0.5957,
+  "portfolio_expected_net_value": 8241.53,
   "top_targets": [
     {
       "customer_id": "cust_0001",
@@ -162,6 +176,7 @@ The V1 repo currently verifies:
 - deterministic treated and control data generation
 - positive estimated uplift for high-intent, price-sensitive users
 - negative or weak uplift for low-value segments that should not be targeted
+- positive expected net value for the recommended segments after treatment cost
 - machine-readable and reviewer-facing targeting outputs derived from the same model run
 
 Current expected report snapshot:
@@ -185,6 +200,7 @@ The V1 repo demonstrates:
 - deterministic intervention dataset generation
 - T-learner treatment-effect estimation
 - segment-level targeting recommendations
+- treatment-cost and net-value-aware targeting recommendations
 - uplift-aware report artifacts
 - uplift-curve and Qini-style evaluation artifacts
 - FastAPI surface for the top recommendation summary
@@ -196,5 +212,4 @@ Possible follow-on work outside the current shipped scope:
 1. compare Qini-style evaluation against a doubly robust baseline
 2. compare T-learner against doubly robust or meta-learner baselines
 3. add policy constraints such as budget caps or fairness limits
-4. simulate treatment cost and net value, not just raw uplift
-5. connect the workflow to an experimentation or campaign-decision system
+4. connect the workflow to an experimentation or campaign-decision system

@@ -115,14 +115,24 @@ def estimate_uplift(rows: list[dict[str, float | int | str]], seed: int = 202604
     uplift_scores = treated_scores - control_scores
 
     segment_buckets: dict[str, list[float]] = defaultdict(list)
+    segment_rows: dict[str, list[dict[str, float | int | str]]] = defaultdict(list)
     for row, uplift_score in zip(rows, uplift_scores, strict=True):
         segment_buckets[str(row["segment"])].append(float(uplift_score))
+        segment_rows[str(row["segment"])].append(row)
 
     segment_summary = [
         {
             "segment": segment,
             "estimated_uplift": round(sum(scores) / len(scores), 4),
-            "recommended": (sum(scores) / len(scores)) > 0.04,
+            "incremental_conversions_per_1000": round((sum(scores) / len(scores)) * 1000, 2),
+            "expected_net_value_per_1000": round(
+                (((sum(scores) / len(scores)) * float(segment_rows[segment][0]["expected_margin"])) - float(segment_rows[segment][0]["treatment_cost"])) * 1000,
+                2,
+            ),
+            "recommended": (
+                (sum(scores) / len(scores)) > 0.04
+                and ((((sum(scores) / len(scores)) * float(segment_rows[segment][0]["expected_margin"])) - float(segment_rows[segment][0]["treatment_cost"])) > 0)
+            ),
         }
         for segment, scores in sorted(segment_buckets.items())
     ]
@@ -151,12 +161,29 @@ def estimate_uplift(rows: list[dict[str, float | int | str]], seed: int = 202604
 
     best_segment = max(segment_summary, key=lambda row: row["estimated_uplift"])
     evaluation = _evaluation_curves(rows, uplift_scores)
+    targeted_customers = [
+        row for row, score in zip(rows, uplift_scores, strict=True)
+        if any(
+            summary["segment"] == row["segment"] and summary["recommended"]
+            for summary in segment_summary
+        )
+    ]
+    portfolio_net_value = round(
+        sum(
+            (float(score) * float(row["expected_margin"])) - float(row["treatment_cost"])
+            for row, score in zip(rows, uplift_scores, strict=True)
+            if any(summary["segment"] == row["segment"] and summary["recommended"] for summary in segment_summary)
+        ),
+        2,
+    )
 
     return {
         "customers_analyzed": len(rows),
         "top_recommended_segment": best_segment["segment"],
         "segment_summary": segment_summary,
         "uplift_at_top_quartile": round(uplift_at_top_quartile, 4),
+        "targeted_customers": len(targeted_customers),
+        "portfolio_expected_net_value": portfolio_net_value,
         "top_targets": top_quartile[:10],
         "evaluation": evaluation,
     }

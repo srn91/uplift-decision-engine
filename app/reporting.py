@@ -16,7 +16,9 @@ def _portable(path: Path) -> str:
 
 def render_markdown(report: dict[str, object]) -> str:
     segment_lines = [
-        f"- `{row['segment']}`: estimated uplift `{row['estimated_uplift']:.4f}`, recommended=`{row['recommended']}`"
+        f"- `{row['segment']}`: estimated uplift `{row['estimated_uplift']:.4f}`, "
+        f"incremental_conversions_per_1000=`{row['incremental_conversions_per_1000']:.2f}`, "
+        f"expected_net_value_per_1000=`{row['expected_net_value_per_1000']:.2f}`, recommended=`{row['recommended']}`"
         for row in report["segment_summary"]
     ]
     evaluation = report["evaluation"]
@@ -44,6 +46,8 @@ def render_markdown(report: dict[str, object]) -> str:
             "",
             f"Top recommended segment: `{report['top_recommended_segment']}`",
             f"Uplift at top quartile: `{report['uplift_at_top_quartile']:.4f}`",
+            f"Targeted customers: `{report['targeted_customers']}`",
+            f"Portfolio expected net value: `{report['portfolio_expected_net_value']:.2f}`",
             f"Qini AUC: `{evaluation['qini_auc']:.4f}`",
             "",
             "## Segment Summary",
