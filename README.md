@@ -189,13 +189,9 @@ The V1 repo demonstrates:
 - uplift-curve and Qini-style evaluation artifacts
 - FastAPI surface for the top recommendation summary
 
-## What This Proves
+## Future Expansion
 
-This repo proves that uplift modeling can be kept small, reproducible, and decision-oriented without hiding the treatment-effect logic behind a black box. A reviewer can inspect the synthetic data, the estimator, the segment ranking, and the published recommendation in one pass.
-
-## Next Steps
-
-Realistic follow-up work for the next milestone:
+Possible follow-on work outside the current shipped scope:
 
 1. compare Qini-style evaluation against a doubly robust baseline
 2. compare T-learner against doubly robust or meta-learner baselines
