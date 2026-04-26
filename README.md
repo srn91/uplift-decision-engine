@@ -126,6 +126,13 @@ Useful endpoints:
 make verify
 ```
 
+## Hosted Deployment
+
+- Live URL: [https://uplift-decision-engine.onrender.com](https://uplift-decision-engine.onrender.com)
+- First path to click: `/health`, then `/recommendation`
+- Browser smoke: passed on `/recommendation`; direct HTTP to `/health` and `/recommendation` returned `200`
+- Render config: Git-backed Python web service on `main`, `buildCommand=python3 -m pip install -r requirements.txt`, `startCommand=uvicorn app.main:app --host 0.0.0.0 --port $PORT`, `healthCheckPath=/health`, `plan=free`, `region=oregon`, auto-deploy enabled
+
 ## Validation
 
 The V1 repo currently verifies:
