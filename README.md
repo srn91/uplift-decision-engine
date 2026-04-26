@@ -30,6 +30,42 @@ flowchart LR
     H --> J["targeting_brief.md"]
 ```
 
+## Causal Framing
+
+This repo is about incremental impact, not raw conversion propensity. The core decision is:
+
+```text
+uplift(x) = P(convert | treatment=1, x) - P(convert | treatment=0, x)
+```
+
+That means a segment is only worth targeting when the intervention changes the outcome enough to justify the campaign. In practice, the V1 runs a simple T-learner, then ranks segments by estimated incremental lift.
+
+### Example Output Schema
+
+The `/recommendation` endpoint returns a JSON report shaped like this:
+
+```json
+{
+  "customers_analyzed": 2400,
+  "top_recommended_segment": "new_high_intent",
+  "segment_summary": [
+    {
+      "segment": "new_high_intent",
+      "estimated_uplift": 0.1234,
+      "recommended": true
+    }
+  ],
+  "uplift_at_top_quartile": 0.5957,
+  "top_targets": [
+    {
+      "customer_id": "cust_0001",
+      "segment": "new_high_intent",
+      "estimated_uplift": 0.182341
+    }
+  ]
+}
+```
+
 ## Tradeoffs
 
 This V1 makes three deliberate tradeoffs:
@@ -103,7 +139,7 @@ Current expected report snapshot:
 
 - customers analyzed: `2400`
 - recommended segment: `new_high_intent`
-- uplift-at-top-quartile: at least `0.09`
+- uplift-at-top-quartile: `0.5957`
 - bottom segment remains non-targeted because estimated uplift is near zero or negative
 
 Local quality gates:
@@ -122,6 +158,10 @@ The V1 repo demonstrates:
 - segment-level targeting recommendations
 - uplift-aware report artifacts
 - FastAPI surface for the top recommendation summary
+
+## What This Proves
+
+This repo proves that uplift modeling can be kept small, reproducible, and decision-oriented without hiding the treatment-effect logic behind a black box. A reviewer can inspect the synthetic data, the estimator, the segment ranking, and the published recommendation in one pass.
 
 ## Next Steps
 
