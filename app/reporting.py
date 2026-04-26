@@ -19,16 +19,44 @@ def render_markdown(report: dict[str, object]) -> str:
         f"- `{row['segment']}`: estimated uplift `{row['estimated_uplift']:.4f}`, recommended=`{row['recommended']}`"
         for row in report["segment_summary"]
     ]
+    evaluation = report["evaluation"]
+    uplift_curve_lines = [
+        "| Fraction | Customers Seen | Treated Rate | Control Rate | Uplift |",
+        "| --- | ---: | ---: | ---: | ---: |",
+    ]
+    qini_curve_lines = [
+        "| Fraction | Customers Seen | Cumulative Gain | Random Baseline | Qini Gain |",
+        "| --- | ---: | ---: | ---: | ---: |",
+    ]
+    for point in evaluation["uplift_curve"]:
+        uplift_curve_lines.append(
+            f"| {point['fraction']:.2f} | {point['customers_seen']} | {point['treated_rate']:.4f} | "
+            f"{point['control_rate']:.4f} | {point['uplift']:.4f} |"
+        )
+    for point in evaluation["qini_curve"]:
+        qini_curve_lines.append(
+            f"| {point['fraction']:.2f} | {point['customers_seen']} | {point['cumulative_gain']:.4f} | "
+            f"{point['random_baseline_gain']:.4f} | {point['qini_gain']:.4f} |"
+        )
     return "\n".join(
         [
             "# Uplift Targeting Brief",
             "",
             f"Top recommended segment: `{report['top_recommended_segment']}`",
             f"Uplift at top quartile: `{report['uplift_at_top_quartile']:.4f}`",
+            f"Qini AUC: `{evaluation['qini_auc']:.4f}`",
             "",
             "## Segment Summary",
             "",
             *segment_lines,
+            "",
+            "## Uplift Curve",
+            "",
+            *uplift_curve_lines,
+            "",
+            "## Qini Curve",
+            "",
+            *qini_curve_lines,
             "",
         ]
     )

@@ -14,6 +14,7 @@ The V1 implementation is intentionally compact and reproducible:
 - a T-learner estimates separate treated and control response probabilities
 - an uplift layer computes per-customer treatment effect estimates and segment summaries
 - a reporting layer emits both a machine-readable uplift report and a Markdown targeting brief
+- the report now includes uplift-curve and Qini-style evaluation outputs
 - a FastAPI endpoint serves the same top-segment recommendation that the CLI uses
 
 ```mermaid
@@ -62,7 +63,28 @@ The `/recommendation` endpoint returns a JSON report shaped like this:
       "segment": "new_high_intent",
       "estimated_uplift": 0.182341
     }
-  ]
+  ],
+  "evaluation": {
+    "uplift_curve": [
+      {
+        "fraction": 0.1,
+        "customers_seen": 240,
+        "treated_rate": 0.2500,
+        "control_rate": 0.1200,
+        "uplift": 0.1300
+      }
+    ],
+    "qini_curve": [
+      {
+        "fraction": 0.1,
+        "customers_seen": 240,
+        "cumulative_gain": 18.0000,
+        "random_baseline_gain": 5.0000,
+        "qini_gain": 13.0000
+      }
+    ],
+    "qini_auc": 0.1234
+  }
 }
 ```
 
@@ -164,6 +186,7 @@ The V1 repo demonstrates:
 - T-learner treatment-effect estimation
 - segment-level targeting recommendations
 - uplift-aware report artifacts
+- uplift-curve and Qini-style evaluation artifacts
 - FastAPI surface for the top recommendation summary
 
 ## What This Proves
@@ -174,7 +197,7 @@ This repo proves that uplift modeling can be kept small, reproducible, and decis
 
 Realistic follow-up work for the next milestone:
 
-1. add uplift curves and Qini-style evaluation
+1. compare Qini-style evaluation against a doubly robust baseline
 2. compare T-learner against doubly robust or meta-learner baselines
 3. add policy constraints such as budget caps or fairness limits
 4. simulate treatment cost and net value, not just raw uplift

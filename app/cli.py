@@ -10,6 +10,7 @@ def report() -> None:
     json_path, markdown_path = write_outputs(uplift_report)
     print(f"recommended_segment={uplift_report['top_recommended_segment']}")
     print(f"uplift_at_top_quartile={uplift_report['uplift_at_top_quartile']}")
+    print(f"qini_auc={uplift_report['evaluation']['qini_auc']}")
     print(f"json_path={json_path}")
     print(f"markdown_path={markdown_path}")
 
