@@ -57,7 +57,7 @@ uplift-decision-engine/
 ### Install Dependencies
 
 ```bash
-git clone git@github.com:srn91/uplift-decision-engine.git
+git clone https://github.com/srn91/uplift-decision-engine.git
 cd uplift-decision-engine
 python3 -m pip install -r requirements.txt
 ```
