@@ -8,7 +8,7 @@ Many intervention systems target users with the highest baseline conversion scor
 
 ## Architecture
 
-The V1 implementation is intentionally compact and reproducible:
+The implementation is intentionally compact and reproducible:
 
 - a deterministic simulator creates treated and untreated customers across interpretable behavioral segments
 - a T-learner estimates separate treated and control response probabilities
@@ -41,7 +41,7 @@ This repo is about incremental impact, not raw conversion propensity. The core d
 uplift(x) = P(convert | treatment=1, x) - P(convert | treatment=0, x)
 ```
 
-That means a segment is only worth targeting when the intervention changes the outcome enough to justify the campaign. In practice, the V1 runs a simple T-learner, then ranks segments by estimated incremental lift.
+That means a segment is only worth targeting when the intervention changes the outcome enough to justify the campaign. In practice, the repo runs a simple T-learner, then ranks segments by estimated incremental lift.
 
 The shipped V2 decision rule adds basic treatment economics:
 
@@ -104,7 +104,7 @@ The `/recommendation` endpoint returns a JSON report shaped like this:
 
 ## Tradeoffs
 
-This V1 makes three deliberate tradeoffs:
+This implementation makes three deliberate tradeoffs:
 
 1. The dataset is synthetic so the full uplift workflow is reproducible locally and does not depend on external experimentation data.
 2. The model uses a simple T-learner with gradient boosting instead of a more specialized uplift package because the repo needs to stay easy to run and inspect.
@@ -171,13 +171,13 @@ make verify
 
 ## Validation
 
-The V1 repo currently verifies:
+The repo currently verifies:
 
 - deterministic treated and control data generation
 - positive estimated uplift for high-intent, price-sensitive users
 - negative or weak uplift for low-value segments that should not be targeted
 - positive expected net value for the recommended segments after treatment cost
-- machine-readable and reviewer-facing targeting outputs derived from the same model run
+- machine-readable and operator-facing targeting outputs derived from the same model run
 
 Current expected report snapshot:
 
@@ -195,7 +195,7 @@ Local quality gates:
 
 ## Current Capabilities
 
-The V1 repo demonstrates:
+The repo demonstrates:
 
 - deterministic intervention dataset generation
 - T-learner treatment-effect estimation
