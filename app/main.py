@@ -22,6 +22,21 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
+@app.get("/")
+def index() -> dict[str, object]:
+    report = current_report()
+    return {
+        "project": "uplift-decision-engine",
+        "status": "ready",
+        "top_recommended_segment": report["top_recommended_segment"],
+        "endpoints": {
+            "health": "/health",
+            "recommendation": "/recommendation",
+            "docs": "/docs",
+        },
+    }
+
+
 @app.get("/recommendation")
 def recommendation() -> dict[str, object]:
     return current_report()

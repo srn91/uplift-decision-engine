@@ -8,6 +8,15 @@ from app.main import app
 client = TestClient(app)
 
 
+def test_root_endpoint_lists_demo_paths() -> None:
+    response = client.get("/")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["project"] == "uplift-decision-engine"
+    assert body["endpoints"]["recommendation"] == "/recommendation"
+
+
 def test_recommendation_endpoint_returns_uplift_summary() -> None:
     response = client.get("/recommendation")
 
