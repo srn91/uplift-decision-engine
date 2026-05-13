@@ -3,9 +3,9 @@
 A local-first uplift modeling workflow that simulates treatment and control outcomes, estimates heterogeneous treatment effects, and recommends which customer segments should receive an intervention.
 
 
-## Proof Snapshot
+## Results
 
-| Signal | Current evidence |
+| Area | Details |
 |---|---|
 | Decision population | Current report analyzes `2400` customers across treatment and control groups. |
 | Targeting logic | Top recommended segment is `new_high_intent`, selected by estimated incremental lift and expected net value. |
@@ -13,7 +13,7 @@ A local-first uplift modeling workflow that simulates treatment and control outc
 | Economic filter | Segments are targetable only when both estimated uplift and expected net value are positive. |
 | Serving proof | FastAPI exposes `/recommendation`; hosted smoke tests returned `200` for `/health` and `/recommendation`. |
 
-## What This Proves
+## Overview
 
 - The project distinguishes uplift from raw conversion propensity and ties model output to intervention economics.
 - The workflow turns treatment-effect estimates into segment targeting decisions and budget-aware action recommendations.
