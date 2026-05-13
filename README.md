@@ -17,7 +17,7 @@ A local-first uplift modeling workflow that simulates treatment and control outc
 
 - The project distinguishes uplift from raw conversion propensity and ties model output to intervention economics.
 - The workflow turns treatment-effect estimates into segment targeting decisions and budget-aware action recommendations.
-- The evidence maps to Data Scientist, Applied Scientist, causal ML, marketing analytics, and decision optimization roles.
+- The implementation combines treatment-effect modeling, policy evaluation, segment diagnostics, and recommendation output.
 
 ## Problem
 
