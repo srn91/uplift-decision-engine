@@ -11,7 +11,7 @@ A local-first uplift modeling workflow that simulates treatment and control outc
 | Targeting logic | Top recommended segment is `new_high_intent`, selected by estimated incremental lift and expected net value. |
 | Uplift evaluation | Uplift-at-top-quartile is `0.5957`; report includes uplift-curve and Qini-style evaluation outputs. |
 | Economic filter | Segments are targetable only when both estimated uplift and expected net value are positive. |
-| Serving proof | FastAPI exposes `/recommendation`; hosted smoke tests returned `200` for `/health` and `/recommendation`. |
+| Serving | FastAPI exposes `/recommendation`; hosted smoke tests returned `200` for `/health` and `/recommendation`. |
 
 ## Overview
 
